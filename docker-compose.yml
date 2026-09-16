@@ -1,0 +1,26 @@
+services:
+
+  db:
+    image: postgres:latest
+    container_name: personal_finance_db
+    environment:
+      POSTGRES_DB: personal_finance
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql
+    ports:
+      - "5432:5432"
+
+  backend:
+    build: ./backend
+    container_name: personal_finance_backend
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: postgresql://user:${POSTGRES_PASSWORD}@db:5432/personal_finance
+    ports:
+      - "8000:8000"
+
+volumes:
+  postgres_data:
